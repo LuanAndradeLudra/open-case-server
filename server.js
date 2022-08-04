@@ -25,6 +25,8 @@ app.use(express.json());
 // Routes
 const weaponRoutes = require("./server/routes/weapon");
 app.use("/weapon", weaponRoutes);
+const boxRoutes = require("./server/routes/box");
+app.use("/box", boxRoutes);
 
 app.get("/", (req, res) => res.send("Hello"));
 
