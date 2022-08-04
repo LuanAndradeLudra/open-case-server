@@ -2,6 +2,7 @@ const weaponDb = require("../model/weapon");
 const weaponService = require("../services/weapon");
 const uploadImage = require("../helpers/uploadImage");
 const deleteImage = require("../helpers/deleteImage");
+const validator = require("../helpers/validator")
 
 exports.create = async (req, res) => {
   const data = req.body;
@@ -9,7 +10,7 @@ exports.create = async (req, res) => {
   const validate = weaponService.validateCreate(data);
   if (validate.next) {
     data.item_price = JSON.parse(data.item_price);
-    data.item_price = weaponService.cleanPrice(data.item_price);
+    data.item_price = validator.cleanPriceObj(data.item_price);
     const uploads = await uploadImage(req.files.image, "weapons");
     if (uploads) {
       const weapon = new weaponDb({
@@ -88,7 +89,7 @@ exports.update = async (req, res) => {
     const id = data.id;
     delete data.id;
     data.item_price = JSON.parse(data.item_price);
-    data.item_price = weaponService.cleanPrice(data.item_price);
+    data.item_price = validator.cleanPriceObj(data.item_price);
     if (req.files) {
       const actualWeapon = await weaponDb.findById(id);
       if (deleteImage(actualWeapon.image, "weapons")) {

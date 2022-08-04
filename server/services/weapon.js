@@ -1,13 +1,13 @@
-const isNotEmpty = require("../helpers/isNotEmpty");
+const validator = require("../helpers/validator")
 
 class WeaponService {
   validateCreate(data) {
     if (
-      isNotEmpty(data.name) &&
-      isNotEmpty(data.item_type) &&
-      isNotEmpty(data.item_rarity) &&
-      isNotEmpty(data.item_price) &&
-      isNotEmpty(data.image)
+      validator.isNotEmpty(data.name) &&
+      validator.isNotEmpty(data.item_type) &&
+      validator.isNotEmpty(data.item_rarity) &&
+      validator.isNotEmpty(data.item_price) &&
+      validator.isNotEmpty(data.image)
     ) {
       return {
         next: true,
@@ -21,10 +21,10 @@ class WeaponService {
 
   validateUpdate(data) {
     if (
-      isNotEmpty(data.name) &&
-      isNotEmpty(data.item_type) &&
-      isNotEmpty(data.item_rarity) &&
-      isNotEmpty(data.item_price)
+      validator.isNotEmpty(data.name) &&
+      validator.isNotEmpty(data.item_type) &&
+      validator.isNotEmpty(data.item_rarity) &&
+      validator.isNotEmpty(data.item_price)
     ) {
       return {
         next: true,
@@ -34,13 +34,6 @@ class WeaponService {
         next: false,
         error: "Dados insuficientes para edição!",
       };
-  }
-
-  cleanPrice(data) {
-    Object.keys(data).forEach((key) => {
-      data[key] = data[key].replaceAll("R$ ", "");
-    });
-    return data;
   }
 }
 
