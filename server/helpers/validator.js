@@ -16,10 +16,18 @@ class Validator {
     return data;
   }
 
+  isLengthGreatOrEqual(value, length){
+    return value.length >= length
+  }
+
   cleanRate(value) {
     let cleanValue = value.replaceAll("%", "").replaceAll(" ", "");
     cleanValue = parseFloat(cleanValue);
     return cleanValue;
+  }
+
+  isEmail(value) {
+    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
   }
 }
 

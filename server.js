@@ -23,6 +23,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Routes
+const authRoutes = require("./server/routes/auth");
+app.use("/auth", authRoutes);
 const weaponRoutes = require("./server/routes/weapon");
 app.use("/weapon", weaponRoutes);
 const boxRoutes = require("./server/routes/box");
