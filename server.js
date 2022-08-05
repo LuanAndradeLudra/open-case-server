@@ -25,6 +25,10 @@ app.use(express.json());
 // Routes
 const authRoutes = require("./server/routes/auth");
 app.use("/auth", authRoutes);
+const authAdminRoutes = require("./server/routes/authAdmin");
+app.use("/authadmin", authAdminRoutes);
+const usersRoutes = require("./server/routes/users");
+app.use("/users", usersRoutes);
 const weaponRoutes = require("./server/routes/weapon");
 app.use("/weapon", weaponRoutes);
 const categoriesRoutes = require("./server/routes/categories");

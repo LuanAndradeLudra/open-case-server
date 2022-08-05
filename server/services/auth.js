@@ -6,8 +6,7 @@ class AuthService {
       validator.isNotEmpty(data.email) &&
       validator.isEmail(data.email) &&
       validator.isLengthGreatOrEqual(data.password, 8) &&
-      validator.isNotEmpty(data.password) &&
-      validator.isNotEmpty(data.type)
+      validator.isNotEmpty(data.password)
     ) {
       return {
         next: true,

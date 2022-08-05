@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -18,6 +18,6 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-const userDb = mongoose.model("userDb", userSchema);
+const adminDb = mongoose.model("adminDb", adminSchema);
 
-module.exports = userDb;
+module.exports = adminDb;

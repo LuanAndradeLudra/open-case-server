@@ -15,9 +15,12 @@ function authMiddleware(req, res, next) {
         } else {
           if (decoded) {
             userDb.findById(decoded.user._id).then((user) => {
-              user.password = null;
-              req.user = user;
-              next();
+              if (user) {
+                user.password = null;
+                user.type = "user";
+                req.user = user;
+                next();
+              } else res.sendStatus(401)
             });
           } else {
             res.sendStatus(401);

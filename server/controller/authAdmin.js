@@ -1,4 +1,4 @@
-const userDb = require("../model/user");
+const adminDb = require("../model/admin");
 const authService = require("../services/auth");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -10,37 +10,17 @@ exports.me = (req, res) => {
   });
 };
 
-exports.logout = (req, res) => {
-  jwt.verify(
-    req.headers.authorization,
-    process.env.JWT_SECRET,
-    (err, decoded) => {
-      if (!err) {
-        res.status(200).send({
-          status: 200,
-          data: decoded,
-        });
-      } else {
-        res.status(401).send({
-          status: 401,
-          error: "Usuário inválido!",
-        });
-      }
-    }
-  );
-};
-
 exports.auth = async (req, res) => {
   const data = req.body;
   const validate = authService.validateLogin(data);
   if (validate.next) {
-    const user = await userDb.findOne({
+    const user = await adminDb.findOne({
       email: data.email,
     });
     if (user) {
       if (bcrypt.compareSync(data.password, user.password)) {
         user.password = null;
-        user.type = "user";
+        user.type = "admin";
         const token = jwt.sign({ user }, process.env.JWT_SECRET, {
           expiresIn: process.env.JWT_EXPIRES,
         });
@@ -73,7 +53,7 @@ exports.create = (req, res) => {
   const data = req.body;
   const validate = authService.validateCreate(data);
   if (validate.next) {
-    const user = new userDb({
+    const user = new adminDb({
       email: data.email,
       password: bcrypt.hashSync(data.password),
       image: {

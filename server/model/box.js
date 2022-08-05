@@ -11,6 +11,7 @@ const boxSchema = new mongoose.Schema({
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "categoriesDb",
     required: false,
   },
   discount: {

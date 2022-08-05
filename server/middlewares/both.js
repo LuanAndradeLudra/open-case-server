@@ -1,3 +1,4 @@
+const userDb = require("../model/user");
 const adminDb = require("../model/admin");
 const jwt = require("jsonwebtoken");
 
@@ -12,14 +13,24 @@ function authMiddleware(req, res, next) {
             status: 401,
             error: "Autorização inválida!",
           });
-          } else {
+        } else {
           if (decoded) {
-            adminDb.findById(decoded.user._id).then((user) => {
+            userDb.findById(decoded.user._id).then((user) => {
               if (user) {
                 user.password = null;
+                user.type = "user";
                 req.user = user;
                 next();
-              } else res.sendStatus(401);
+              } else {
+                adminDb.findById(decoded.user._id).then((user) => {
+                  if (user) {
+                    user.password = null;
+                    user.type = "user";
+                    req.user = user;
+                    next();
+                  } else res.sendStatus(401);
+                });
+              }
             });
           } else {
             res.sendStatus(401);

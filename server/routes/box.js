@@ -2,10 +2,10 @@ const express = require("express");
 const router = new express.Router();
 const controller = require("../controller/box");
 const middlewareAdmin = require("../middlewares/admin");
-const middlewareUser = require("../middlewares/user");
+const middlewareBoth = require("../middlewares/both");
 
-router.get("/find/:id", middlewareUser, controller.find);
-router.get("/list", middlewareUser, controller.list);
+router.get("/find/:id", middlewareBoth, controller.find);
+router.get("/list", middlewareBoth, controller.list);
 router.post("/create", middlewareAdmin, controller.create);
 router.put("/update/:id", middlewareAdmin, controller.update);
 router.delete("/delete/:id", middlewareAdmin, controller.delete);

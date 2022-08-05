@@ -56,7 +56,7 @@ exports.create = async (req, res) => {
 exports.list = (req, res) => {
   boxDb
     .find()
-    .populate("weapons.weapon")
+    .populate("weapons.weapon category")
     .then((data) => {
       res.status(200).send({
         status: 200,
@@ -74,7 +74,7 @@ exports.list = (req, res) => {
 exports.find = (req, res) => {
   boxDb
     .findById(req.params.id)
-    .populate("weapons.weapon")
+    .populate("weapons.weapon category")
     .then((data) => {
       res.status(200).send({
         status: 200,
