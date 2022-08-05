@@ -10,6 +10,5 @@ router.get("/find/:id", middlewareAdmin, controller.find);
 router.get("/list", middlewareAdmin, controller.list);
 router.post("/auth", controller.auth);
 router.post("/create", middlewareAdmin, controller.create);
-router.delete("/delete/:id", middlewareAdmin, controller.delete);
 
 module.exports = router;

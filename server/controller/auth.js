@@ -138,5 +138,3 @@ exports.create = (req, res) => {
     });
   }
 };
-
-exports.delete = (req, res) => {};

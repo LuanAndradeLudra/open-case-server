@@ -27,6 +27,8 @@ const authRoutes = require("./server/routes/auth");
 app.use("/auth", authRoutes);
 const weaponRoutes = require("./server/routes/weapon");
 app.use("/weapon", weaponRoutes);
+const categoriesRoutes = require("./server/routes/categories");
+app.use("/categories", categoriesRoutes);
 const boxRoutes = require("./server/routes/box");
 app.use("/box", boxRoutes);
 

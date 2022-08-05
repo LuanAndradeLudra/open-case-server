@@ -9,6 +9,10 @@ const boxSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+  },
   discount: {
     type: Number,
     required: false,

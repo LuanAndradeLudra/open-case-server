@@ -10,6 +10,7 @@ exports.create = async (req, res) => {
   if (req.files && req.files.image) data.image = req.files.image;
   const validate = boxService.validateCreate(data);
   if (validate.next) {
+    if (!data.category) data.category = null
     data.weapons = boxService.cleanWeapons(data.weapons);
     data.price = validator.cleanPrice(data.price);
     const uploads = await uploadImage(req.files.image, "box");
@@ -19,6 +20,7 @@ exports.create = async (req, res) => {
         price: data.price,
         image: uploads,
         weapons: data.weapons,
+        category: data.category
       };
       if (data.discount)
         dataFinal.discount = validator.cleanRate(data.discount);
@@ -95,6 +97,7 @@ exports.update = async (req, res) => {
     delete data.id;
     data.weapons = boxService.cleanWeapons(data.weapons);
     data.price = validator.cleanPrice(data.price);
+    if (!data.category) data.category = null
     if (req.files) {
       const actualBox = await boxDb.findById(id);
       if (deleteImage(actualBox.image, "box")) {
