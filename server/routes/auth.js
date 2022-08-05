@@ -9,6 +9,7 @@ router.get("/logout", middlewareUser, controller.logout);
 router.get("/find/:id", middlewareAdmin, controller.find);
 router.get("/list", middlewareAdmin, controller.list);
 router.post("/auth", controller.auth);
-router.post("/create", middlewareAdmin, controller.create);
+router.post("/create", middlewareUser, controller.create);
+router.post("/createAdmin", middlewareAdmin, controller.createAdmin);
 
 module.exports = router;

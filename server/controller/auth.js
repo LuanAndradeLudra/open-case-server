@@ -109,7 +109,44 @@ exports.create = (req, res) => {
     const user = new userDb({
       email: data.email,
       password: bcrypt.hashSync(data.password),
-      type: data.type,
+      type: "user",
+      image: {
+        original: "default.png",
+        thumb: "default.png",
+        preview: "default.png",
+      },
+    });
+    user
+      .save(user)
+      .then((data) => {
+        data.password = null;
+        res.status(200).send({
+          status: 200,
+          data,
+        });
+      })
+      .catch((err) => {
+        res.status(500).send({
+          status: 500,
+          error: err,
+        });
+      });
+  } else {
+    res.status(500).send({
+      status: 500,
+      error: validate.error,
+    });
+  }
+};
+
+exports.createAdmin = (req, res) => {
+  const data = req.body;
+  const validate = authService.validateCreate(data);
+  if (validate.next) {
+    const user = new userDb({
+      email: data.email,
+      password: bcrypt.hashSync(data.password),
+      type: "admin",
       image: {
         original: "default.png",
         thumb: "default.png",
