@@ -21,7 +21,7 @@ module.exports = async function uploadImage(image, path) {
     uploads.thumb = imageName;
 
     return uploads;
-  } catch (e) {
+  } catch (err) {
     return false;
   }
 };

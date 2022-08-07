@@ -9,7 +9,7 @@ module.exports = function removeImage(images, path) {
     });
      
     return true;
-  } catch (e) {
+  } catch (err) {
     return false;
   }
 };

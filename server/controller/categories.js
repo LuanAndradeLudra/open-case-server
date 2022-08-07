@@ -58,7 +58,7 @@ exports.listbox = async (req, res) => {
       status: 200,
       data: finalCategories,
     });
-  } catch (e) {
+  } catch (err) {
     res.status(500).send({
       status: 500,
       error: err,
@@ -66,30 +66,70 @@ exports.listbox = async (req, res) => {
   }
 };
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   const name = req.body.name;
   if (name) {
-    const categorie = new categoriesDb({
-      name,
-    });
-    categorie
-      .save(categorie)
-      .then((data) => {
-        res.status(200).send({
-          status: 200,
-          data,
-        });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          status: 500,
-          error: err,
-        });
+    try {
+      const exists = await categoriesDb.findOne({
+        name,
       });
+      if (!exists) {
+        const categorie = new categoriesDb({
+          name,
+        });
+        categorie
+          .save(categorie)
+          .then((data) => {
+            res.status(200).send({
+              status: 200,
+              data,
+            });
+          })
+          .catch((err) => {
+            throw err;
+          });
+      } else throw "Já existe uma categoria com esse nome!";
+    } catch (err) {
+      res.status(500).send({
+        status: 500,
+        error: err,
+      });
+    }
   } else {
     res.status(500).send({
       status: 500,
       error: "Dados insuficientes para cadastro de categoria!",
+    });
+  }
+};
+
+exports.update = async (req, res) => {
+  const name = req.body.name;
+  const id = req.params.id;
+  if (name && id) {
+    try {
+      const exists = await categoriesDb.findOne({
+        name,
+        _id: { $ne: id },
+      });
+      if (!exists) {
+        categoriesDb.findByIdAndUpdate(id, { name }).then((data) => {
+          res.status(200).send({
+            status: 200,
+            data,
+          });
+        });
+      } else throw "Já existe uma categoria com esse nome!";
+    } catch (err) {
+      res.status(500).send({
+        status: 500,
+        error: err,
+      });
+    }
+  } else {
+    res.status(500).send({
+      status: 500,
+      error: "Dados insuficientes para atualização de categoria!",
     });
   }
 };
@@ -106,14 +146,14 @@ exports.delete = async (req, res) => {
           category: null,
         });
       });
-       await categoriesDb.findByIdAndDelete(id);
+      await categoriesDb.findByIdAndDelete(id);
       res.status(200).send({
         status: 200,
       });
-    } catch (e) {
+    } catch (err) {
       res.status(500).send({
         status: 500,
-        error: "Houve um erro ao tentar deletar a categoria",
+        error: err,
       });
     }
   } else {

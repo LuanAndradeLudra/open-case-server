@@ -10,39 +10,38 @@ exports.create = async (req, res) => {
   if (req.files && req.files.image) data.image = req.files.image;
   const validate = boxService.validateCreate(data);
   if (validate.next) {
-    if (!data.category) data.category = null
-    data.weapons = boxService.cleanWeapons(data.weapons);
-    data.price = validator.cleanPrice(data.price);
-    const uploads = await uploadImage(req.files.image, "box");
-    if (uploads) {
-      const dataFinal = {
+    try {
+      const exists = await boxDb.findOne({
         name: data.name,
-        price: data.price,
-        image: uploads,
-        weapons: data.weapons,
-        category: data.category
-      };
-      if (data.discount)
-        dataFinal.discount = validator.cleanRate(data.discount);
-      const box = new boxDb(dataFinal);
-      box
-        .save(box)
-        .then((data) => {
-          res.status(200).send({
-            status: 200,
-            data,
+      });
+      if (!exists) {
+        if (!data.category) data.category = null;
+        data.weapons = boxService.cleanWeapons(data.weapons);
+        data.price = validator.cleanPrice(data.price);
+        const uploads = await uploadImage(req.files.image, "box");
+        if (uploads) {
+          const dataFinal = {
+            name: data.name,
+            price: data.price,
+            image: uploads,
+            weapons: data.weapons,
+            category: data.category,
+          };
+          if (data.discount)
+            dataFinal.discount = validator.cleanRate(data.discount);
+          const box = new boxDb(dataFinal);
+          box.save(box).then((data) => {
+            res.status(200).send({
+              status: 200,
+              data,
+            });
           });
-        })
-        .catch((err) => {
-          res.status(500).send({
-            status: 500,
-            error: err,
-          });
-        });
-    } else {
-      res.status(500).send({
-        status: 500,
-        error: "Uploads failed!",
+        } else throw "Falha ao cadastrar imagens!";
+      } else throw "Já existe uma caixa com esse nome!";
+    } catch (err) {
+      res.status(401).send({
+        status: 401,
+        error: err,
       });
     }
   } else {
@@ -93,35 +92,40 @@ exports.update = async (req, res) => {
   const data = req.body;
   const validate = boxService.validateUpdate(data, false);
   if (validate.next) {
-    const id = data.id;
-    delete data.id;
-    data.weapons = boxService.cleanWeapons(data.weapons);
-    data.price = validator.cleanPrice(data.price);
-    if (!data.category) data.category = null
-    if (req.files) {
-      const actualBox = await boxDb.findById(id);
-      if (deleteImage(actualBox.image, "box")) {
-        const uploads = await uploadImage(req.files.image, "box");
-        if (uploads) {
-          data.image = uploads;
-        }
-      }
-    }
-    if (data.discount) data.discount = validator.cleanRate(data.discount);
-    boxDb
-      .findByIdAndUpdate(id, { ...data })
-      .then((data) => {
-        res.status(200).send({
-          status: 200,
-          data,
-        });
-      })
-      .catch((err) => {
-        res.status(500).send({
-          status: 500,
-          error: err,
-        });
+    try {
+      const id = req.params.id;
+      const exists = await boxDb.findOne({
+        name: data.name,
+        _id: { $ne: id },
       });
+      if (!exists) {
+        delete data.id;
+        data.weapons = boxService.cleanWeapons(data.weapons);
+        data.price = validator.cleanPrice(data.price);
+        if (!data.category) data.category = null;
+        if (req.files && req.files.image) {
+          const actualBox = await boxDb.findById(id);
+          if (deleteImage(actualBox.image, "box")) {
+            const uploads = await uploadImage(req.files.image, "box");
+            if (uploads) {
+              data.image = uploads;
+            } else throw "Uploads failed!";
+          }
+        }
+        if (data.discount) data.discount = validator.cleanRate(data.discount);
+        boxDb.findByIdAndUpdate(id, { ...data }).then((data) => {
+          res.status(200).send({
+            status: 200,
+            data,
+          });
+        });
+      } else throw "Já existe uma caixa com esse nome!";
+    } catch (err) {
+      res.status(500).send({
+        status: 500,
+        error: err,
+      });
+    }
   } else {
     res.status(500).send({
       status: 500,
@@ -140,7 +144,7 @@ exports.delete = async (req, res) => {
       res.status(200).send({
         status: 200,
       });
-    } catch (e) {
+    } catch (err) {
       res.status(500).send({
         status: 500,
         error: "Houve um erro ao tentar deletar o weapon",

@@ -30,7 +30,7 @@ class AuthService {
     } else
       return {
         next: false,
-        error: "Dados insuficientes para criação!",
+        error: "Dados insuficientes para a autênticação!",
       };
   }
 }
