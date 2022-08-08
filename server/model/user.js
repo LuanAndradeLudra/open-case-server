@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
     thumb: { type: String, required: true },
     original: { type: String, required: true },
   },
+  inventory:  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "inventoryDb",
+    required: false,
+  },
 });
 
 const userDb = mongoose.model("userDb", userSchema);

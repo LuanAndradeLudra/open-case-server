@@ -1,22 +1,26 @@
 const userDb = require("../model/user");
+const inventoryDb = require("../model/inventory");
 const authService = require("../services/auth");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 exports.me = (req, res) => {
-  userDb.findById(req.user._id).then((user) => {
-    if (user) {
-      user.password = null;
-      res.status(200).send({
-        status: 200,
-        data: user,
-      });
-    } else
-      res.status(401).send({
-        status: 401,
-        error: "Usuário inválido!",
-      });
-  });
+  userDb
+    .findById(req.user._id)
+    .populate("inventory")
+    .then((user) => {
+      if (user) {
+        user.password = null;
+        res.status(200).send({
+          status: 200,
+          data: user,
+        });
+      } else
+        res.status(401).send({
+          status: 401,
+          error: "Usuário inválido!",
+        });
+    });
 };
 
 exports.auth = async (req, res) => {
@@ -24,9 +28,12 @@ exports.auth = async (req, res) => {
   const validate = authService.validateLogin(data);
   if (validate.next) {
     try {
-      const user = await userDb.findOne({
-        email: data.email,
-      });
+      const user = await userDb
+        .findOne({
+          email: data.email,
+        })
+        .populate("inventory")
+        .catch((err) => console.log(err));
       if (user) {
         if (bcrypt.compareSync(data.password, user.password)) {
           user.password = null;
@@ -61,19 +68,26 @@ exports.create = async (req, res) => {
   const validate = authService.validateCreate(data);
   if (validate.next) {
     try {
-      const user = new userDb({
-        email: data.email,
-        password: bcrypt.hashSync(data.password),
-        image: {
-          original: "default.png",
-          thumb: "default.png",
-          preview: "default.png",
-        },
+      const inventory = new inventoryDb({
+        wallet: 500,
+        drops: [],
       });
-      user.save(user).then((data) => {
-        res.status(200).send({
-          status: 200,
-          data,
+      inventory.save(inventory).then((inventoryData) => {
+        const user = new userDb({
+          email: data.email,
+          password: bcrypt.hashSync(data.password),
+          image: {
+            original: "default.png",
+            thumb: "default.png",
+            preview: "default.png",
+          },
+          inventory: inventoryData._id,
+        });
+        user.save(user).then((userData) => {
+          res.status(200).send({
+            status: 200,
+            data: userData,
+          });
         });
       });
     } catch (err) {
