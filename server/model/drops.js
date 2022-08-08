@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const inventorySchema = new mongoose.Schema({
+const dropsSchema = new mongoose.Schema({
   weapon: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "weaponDb",
@@ -10,12 +10,12 @@ const inventorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  factory_new: {
+  statTrak: {
     type: Boolean,
     required: true,
   },
 });
 
-const inventory = mongoose.model("inventoryDb", inventorySchema);
+const dropsDb = mongoose.model("dropsDb", dropsSchema);
 
-module.exports = inventory;
+module.exports = dropsDb;

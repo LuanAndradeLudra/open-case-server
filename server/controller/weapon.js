@@ -103,10 +103,8 @@ exports.update = async (req, res) => {
             const uploads = await uploadImage(req.files.image, "weapons");
             if (uploads) {
               data.image = uploads;
-            }
-            throw "Falha ao cadastrar imagens!";
-          }
-          throw "Falha ao deletar imagens!";
+            } else throw "Falha ao cadastrar imagens!";
+          } else throw "Falha ao deletar imagens!";
         }
         weaponDb.findByIdAndUpdate(id, { ...data }).then((data) => {
           res.status(200).send({

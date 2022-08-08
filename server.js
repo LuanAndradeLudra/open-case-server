@@ -35,6 +35,8 @@ const categoriesRoutes = require("./server/routes/categories");
 app.use("/categories", categoriesRoutes);
 const boxRoutes = require("./server/routes/box");
 app.use("/box", boxRoutes);
+const gamesRoutes = require("./server/routes/games");
+app.use("/games", gamesRoutes);
 
 app.get("/", (req, res) => res.send("Hello"));
 

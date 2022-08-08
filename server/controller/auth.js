@@ -37,9 +37,7 @@ exports.auth = async (req, res) => {
       if (user) {
         if (bcrypt.compareSync(data.password, user.password)) {
           user.password = null;
-          const token = jwt.sign({ user }, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRES,
-          });
+          const token = jwt.sign({ user }, process.env.JWT_SECRET);
           res.status(200).send({
             status: 200,
             token,
@@ -83,12 +81,22 @@ exports.create = async (req, res) => {
           },
           inventory: inventoryData._id,
         });
-        user.save(user).then((userData) => {
-          res.status(200).send({
-            status: 200,
-            data: userData,
+        user
+          .save(user)
+          .then((userData) => {
+            user.password = null;
+            res.status(200).send({
+              status: 200,
+              data: userData,
+            });
+          })
+          .catch(async (err) => {
+            await inventoryDb.findByIdAndDelete(inventoryData._id)
+            res.status(401).send({
+              status: 401,
+              error: err,
+            });
           });
-        });
       });
     } catch (err) {
       res.status(401).send({

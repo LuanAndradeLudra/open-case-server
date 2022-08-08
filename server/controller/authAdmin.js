@@ -22,19 +22,17 @@ exports.auth = async (req, res) => {
   const validate = authService.validateLogin(data);
   if (validate.next) {
     try {
-      const user = await adminDb.findOne({
+      const admin = await adminDb.findOne({
         email: data.email,
       });
-      if (user) {
-        if (bcrypt.compareSync(data.password, user.password)) {
-          user.password = null;
-          const token = jwt.sign({ user }, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRES,
-          });
+      if (admin) {
+        if (bcrypt.compareSync(data.password, admin.password)) {
+          admin.password = null;
+          const token = jwt.sign({ admin }, process.env.JWT_SECRET);
           res.status(200).send({
             status: 200,
             token,
-            data: user,
+            data: admin,
           });
         } else {
           throw "Usuário ou senha inválidos!";

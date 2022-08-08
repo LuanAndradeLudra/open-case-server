@@ -11,6 +11,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   image: {
     preview: { type: String, required: true },
     thumb: { type: String, required: true },

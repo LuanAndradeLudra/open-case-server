@@ -14,10 +14,10 @@ function authMiddleware(req, res, next) {
           });
           } else {
             try {
-              const user = await  adminDb.findById(decoded.user._id)
-              if (user) {
-                user.password = null;
-                req.user = user;
+              const admin = await  adminDb.findById(decoded.admin._id)
+              if (admin) {
+                admin.password = null;
+                req.user = admin;
                 next();
               } else throw "Autorização negada!";
             } catch (err) {
