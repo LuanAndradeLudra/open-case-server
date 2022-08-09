@@ -72,6 +72,7 @@ exports.create = async (req, res) => {
       });
       inventory.save(inventory).then((inventoryData) => {
         const user = new userDb({
+          name: data.name,
           email: data.email,
           password: bcrypt.hashSync(data.password),
           image: {

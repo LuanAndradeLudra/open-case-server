@@ -3,6 +3,7 @@ const validator = require("../helpers/validator");
 class AuthService {
   validateCreate(data) {
     if (
+      validator.isNotEmpty(data.name) &&
       validator.isNotEmpty(data.email) &&
       validator.isEmail(data.email) &&
       validator.isLengthGreatOrEqual(data.password, 8) &&
